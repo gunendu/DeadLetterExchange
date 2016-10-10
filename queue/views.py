@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-# Create your views here.
+from django.views.decorators.csrf import csrf_exempt
 
-def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+@csrf_exempt
+def messagePost(request):
+    print "view is called"
+    print "request data",request.data
+    return HttpResponse("Hello, world.")
