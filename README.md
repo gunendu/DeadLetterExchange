@@ -13,15 +13,13 @@ Once producer receives a message it puts the message in worker_exchange, which i
 
 Consumer listens for any incoming message on worker_queue, once it receives the message it tries to post the message to callback_url, if callback_url service is available it processes the message, if the callback url service is not available then it puts the message in any another rabbitmq exchange call retry_exchange with a ttl of 1000 ms, so everytime there is a failure in triggering callback_url, message goes to retry_exchange, worker_exchange is defined as dead letter exhcnage(dlx) for retry_exchange, what it means is whenever any failed message expires after 1000 ms in retry_exchange it goes back to worker_exhange, then the message is consumed again by consumer, unless callback_url is triggered successfully for that particular message
 
-Simulate callback_url service by
-
 Producer Message:
 
 hello12
 hello11
 hello33
 hello55
-hello40 
+hello40
 hello99
 hello24
 hello65
