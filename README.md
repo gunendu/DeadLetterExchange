@@ -1,6 +1,4 @@
-# DeadLetterExchange
-
-Frameeork Used :- Django
+Framework Used :- Django
 Messaging Service :- RabbitMq
 Code Repo :- https://github.com/gunendu/DeadLetterExchange
 App Deployed :- https://git.heroku.com/ddlx.git
