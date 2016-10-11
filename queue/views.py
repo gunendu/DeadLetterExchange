@@ -4,9 +4,10 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import pika
 from random import randint
+import random
 
 @csrf_exempt
-def messagePost(request):
+def producemessage(request):
     data = json.loads(request.body)
 
     connection = pika.BlockingConnection(pika.ConnectionParameters(
@@ -21,13 +22,15 @@ def messagePost(request):
     channel.queue_bind(exchange='worker_exchange',queue='worker_queue')
 
     for i in range(10):
-        message = "hello world" + str(randint(0,100))
+        message = {}
+        message['url'] = 'http://localhost:8000/queue/consumer/'
+        message['msg'] = "hello world" + str(randint(0,100))
 
         print "pubished message",message
 
         channel.basic_publish(exchange='worker_exchange',
-                          routing_key='',
-                          body=message)
+                          routing_key='worker_queue',
+                          body=json.dumps(message))
 
 
     #retry queue
@@ -40,3 +43,12 @@ def messagePost(request):
     connection.close()
 
     return HttpResponse("Hello, world.")
+
+
+@csrf_exempt
+def consumemessage(request):
+    data = json.loads(request.body)
+    if random.random() < 0.5:
+        return HttpResponse(status=200)
+    else:
+        return HttpResponse(status=400)

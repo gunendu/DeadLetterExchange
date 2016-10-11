@@ -1,6 +1,7 @@
 import json
 import pika
 import random
+import requests
 
 def consumer():
     connection = pika.BlockingConnection(pika.ConnectionParameters(
@@ -10,11 +11,9 @@ def consumer():
     #retry queue
     channel.exchange_declare(exchange='worker_exchange',type='fanout')
 
-    result = channel.queue_declare(exclusive=True)
+    #result = channel.queue_declare(exclusive=True)
 
-    queue_name = 'worker_queue'#result.method.queue
-
-    print "queue_name is",queue_name
+    queue_name = 'worker_queue' #result.method.queue
 
     channel.queue_bind(exchange='worker_exchange',
                    queue=queue_name)
@@ -22,18 +21,20 @@ def consumer():
     channel.queue_bind(exchange='retry_exchange',
                     queue='retry_queue')
 
-    print 'Waiting for logs. To exit press CTRL+C'
-
     def callback(ch, method, properties, body):
-        print(" [x] %r" % body)
-        if random.random() < 0.5:
-            print "enque retry queue",method.delivery_tag
+        body = json.loads(body)
+        data = {}
+        data['message'] = body['msg']
+        url = body['url']
+        response = requests.post(url,json.dumps(data))
+        if response.status_code == 400:
+            print "retry_exchange ",data['message']
             channel.basic_publish(exchange='retry_exchange',
-                              routing_key='',
-                              body=body)
+                         routing_key='',
+                         body=json.dumps(body))
         else:
-            print "ack message",method.delivery_tag
-            ch.basic_ack(delivery_tag=method.delivery_tag)
+            print "ack for message ",data['message']
+
 
     channel.basic_consume(callback,
                       queue=queue_name,
