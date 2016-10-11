@@ -1,11 +1,22 @@
 import json
-import pika
+import pika,os,urlparse
 import random
 import requests
 
 def consumer():
-    connection = pika.BlockingConnection(pika.ConnectionParameters(
-        host='localhost'))
+    #connection = pika.BlockingConnection(pika.ConnectionParameters(
+    #    host='localhost'))
+
+    #Heroku changes start
+
+    url_str = os.environ.get('CLOUDAMQP_URL', 'amqp://guest:guest@localhost//')
+    url = urlparse.urlparse(url_str)
+    params = pika.ConnectionParameters(host=url.hostname, virtual_host=url.path[1:],
+             credentials=pika.PlainCredentials(url.username, url.password))
+    connection = pika.BlockingConnection(params)
+
+    #heroku changes end
+
     channel = connection.channel()
 
     #retry queue

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-import pika
+import pika,os,urlparse
 from random import randint
 import random
 
@@ -10,8 +10,19 @@ import random
 def producemessage(request):
     data = json.loads(request.body)
 
-    connection = pika.BlockingConnection(pika.ConnectionParameters(
-        host='localhost'))
+    '''connection = pika.BlockingConnection(pika.ConnectionParameters(
+        host='localhost'))'''
+
+    #Heroku changes start
+
+    url_str = os.environ.get('CLOUDAMQP_URL', 'amqp://guest:guest@localhost//')
+    url = urlparse.urlparse(url_str)
+    params = pika.ConnectionParameters(host=url.hostname, virtual_host=url.path[1:],
+             credentials=pika.PlainCredentials(url.username, url.password))
+    connection = pika.BlockingConnection(params)
+
+    #heroku changes end
+
     channel = connection.channel()
 
     #Worker queue
@@ -23,7 +34,7 @@ def producemessage(request):
 
     for i in range(10):
         message = {}
-        message['url'] = 'http://localhost:8000/queue/consumer/'
+        message['url'] = 'http://localhost:5000/queue/consumer/'
         message['msg'] = "hello world" + str(randint(0,100))
 
         print "pubished message",message
