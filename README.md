@@ -17,12 +17,12 @@ Simulate callback_url service by
 
 Producer Message:
 
-hello12\n
-hello11\n
-hello33\n
-hello55\n
-hello40\n
-hello99\n
+hello12
+hello11
+hello33
+hello55
+hello40 
+hello99
 hello24
 hello65
 hello87
