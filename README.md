@@ -17,12 +17,12 @@ Simulate callback_url service by
 
 Producer Message:
 
-hello12
-hello11
-hello33
-hello55
-hello40
-hello99
+hello12\n
+hello11\n
+hello33\n
+hello55\n
+hello40\n
+hello99\n
 hello24
 hello65
 hello87
@@ -50,4 +50,3 @@ App is deployed on heroku,start the app locally:-
 1) heroku local web (start django server on 5000)
 2) curl -H "Content-Type: application/json" -X POST -d '{"message":"hello","callback_url":"http://localhost:5000/queue/consumer/"}' http://localhost:5000/queue/producer/
 3) python consumer.py (starts consumer)
-    
