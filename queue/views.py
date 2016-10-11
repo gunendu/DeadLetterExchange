@@ -3,11 +3,11 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 import pika
+from random import randint
 
 @csrf_exempt
 def messagePost(request):
     data = json.loads(request.body)
-    print "data is",data['message']
 
     connection = pika.BlockingConnection(pika.ConnectionParameters(
         host='localhost'))
@@ -20,9 +20,14 @@ def messagePost(request):
 
     channel.queue_bind(exchange='worker_exchange',queue='worker_queue')
 
-    channel.basic_publish(exchange='worker_exchange',
-                      routing_key='',
-                      body='Hello World!')
+    for i in range(10):
+        message = "hello world" + str(randint(0,100))
+
+        print "pubished message",message
+
+        channel.basic_publish(exchange='worker_exchange',
+                          routing_key='',
+                          body=message)
 
 
     #retry queue
