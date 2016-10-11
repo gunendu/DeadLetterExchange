@@ -53,12 +53,11 @@ def producemessage(request):
 
     connection.close()
 
-    return HttpResponse("Hello, world.")
+    return HttpResponse("")
 
 
 @csrf_exempt
 def consumemessage(request):
-    data = json.loads(request.body)
     if random.random() < 0.5:
         return HttpResponse(status=200)
     else:
