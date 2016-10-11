@@ -34,8 +34,8 @@ def producemessage(request):
 
     for i in range(10):
         message = {}
-        message['url'] = 'http://localhost:5000/queue/consumer/'
-        message['msg'] = "hello world" + str(randint(0,100))
+        message['url'] = data['callback_url']
+        message['msg'] = data['message'] + str(randint(0,100))
 
         print "pubished message",message
 
