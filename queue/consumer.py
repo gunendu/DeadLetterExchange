@@ -11,9 +11,7 @@ def consumer():
     #retry queue
     channel.exchange_declare(exchange='worker_exchange',type='fanout')
 
-    #result = channel.queue_declare(exclusive=True)
-
-    queue_name = 'worker_queue' #result.method.queue
+    queue_name = 'worker_queue'
 
     channel.queue_bind(exchange='worker_exchange',
                    queue=queue_name)
