@@ -59,7 +59,6 @@ def producemessage(request):
 
 @csrf_exempt
 def callback_service(request):
-    print "callback_service is called"
     if random.random() < 0.5:
         return HttpResponse(status=200)
     else:
