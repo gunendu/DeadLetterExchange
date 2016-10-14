@@ -5,6 +5,7 @@ import json
 import pika,os,urlparse
 from random import randint
 import random
+import requests
 
 @csrf_exempt
 def producemessage(request):
@@ -32,11 +33,12 @@ def producemessage(request):
 
     channel.queue_bind(exchange='worker_exchange',queue='worker_queue')
 
+    messages = []
     for i in range(10):
         message = {}
         message['url'] = data['callback_url']
         message['msg'] = data['message'] + str(randint(0,100))
-
+        messages.append(message)
         print "pubished message",message
 
         channel.basic_publish(exchange='worker_exchange',
@@ -53,11 +55,11 @@ def producemessage(request):
 
     connection.close()
 
-    return HttpResponse("")
-
+    return HttpResponse(json.dumps(messages), content_type="application/json")
 
 @csrf_exempt
-def consumemessage(request):
+def callback_service(request):
+    print "callback_service is called"
     if random.random() < 0.5:
         return HttpResponse(status=200)
     else:
